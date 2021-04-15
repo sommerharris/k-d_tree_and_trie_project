@@ -9,15 +9,15 @@
 typedef struct node {
 	char data;
 	struct node* children[ALPHABET_SIZE];
-	bool endOfWord;
+	char endOfWord;
 } node_t;
 
-
+/*
 typedef struct trie{
 	node_t* root;
 	node_t* children[ALPHABET_SIZE];
 } trie_t;
-
+*/
 
 node_t* makeNode(char a) {
 	int i;	
@@ -29,7 +29,7 @@ node_t* makeNode(char a) {
 	}
 
 	n->data = a;
-	n->endOfWord = false;
+	n->endOfWord = 'N';
 
 	for (i = 0; i < ALPHABET_SIZE; i++) {
 		n->children[i] = NULL;
@@ -37,7 +37,7 @@ node_t* makeNode(char a) {
 
 	return n;
 }
-
+/*
 trie_t* makeTrie() {
 	int i;
 	
@@ -50,10 +50,10 @@ trie_t* makeTrie() {
 	
 	return t;
 }
-
+*/
 char* newString(char* c) {
-	if (!c) {
-		return NULL;
+	if (strlen(c) == 1 ) {
+		return "\0";
 	}
 
 	char* new = malloc(sizeof(char)*32);
@@ -69,47 +69,50 @@ char* newString(char* c) {
 	return new;
 }
 
-trie_t* insert(node_t* root, char* c) {
-	if (!c) {
-		root->endOfWord = true;
-		return NULL;
+
+
+void insert(node_t* root, char* c) {
+	if (c == "\0") {
+		root->endOfWord = 'Y';
+		return;
 	}
 		
 	int i = (int)c[0] - (int)'a';
-//	while (c[0]) {
-		if(root->children[i] != NULL) {
-			insert(root->children[i], newString(c));
-		//	printf("shouldn't be here");
-		} else {
-			root->children[i] = makeNode(c[0]);
-		//	insert(root->children[i], newString(c));
-		}	
-//	}
-//	printf("%c\n", currChar);
+	printf("%d\n", i);
+
+	if(root->children[i] != NULL) {		
+		insert(root->children[i], newString(c));
+	} else {
+		root->children[i] = makeNode(c[0]);
+		insert(root->children[i], newString(c));	
+	}	
 
 }
 
+
+
 void print(node_t* root) {
 	int i=0;
-
-	while (root->endOfWord = false) {
-	
 	for (i = 0; i < ALPHABET_SIZE; i++) {
 		if (root->children[i] != NULL) {
-			printf("%c",root->children[i]->data);
-			print(root->children[i]);
+			if (root->children[i]->endOfWord == 'Y') {
+				printf("%c\n",root->children[i]->data);
+				return;
+			} else {
+				printf("%c", root->children[i]->data);
+				print(root->children[i]);
+			}
 		}
 	}
-	}
 
-	printf("%c\n",root->data);
+
 }
 
 int main() {
 
-	node_t* root = makeNode('a');
-	root->endOfWord = true;
-	insert(root, "test");
+	node_t* root = makeNode(' ');
+	char* s = "test";
+	insert(root,s);
 	print(root);
 	
 	return 0;
