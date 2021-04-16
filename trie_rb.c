@@ -71,24 +71,35 @@ void insert(node_t* root, char* c) {
 
 
 
-void print(node_t* root) {
-	int i=0;
-	char* current;
+
+
+void printHelper(node_t* root, char* current) {
+	int i;
 	for (i = 0; i < ALPHABET_SIZE; i++) {
 		if (root->children[i] != NULL) {
 			if (root->children[i]->endOfWord == 'Y') {
-				printf("%c\n",root->children[i]->data);
-			//	return;
+				current[strlen(current)] = root->children[i]->data;
+				printf("%s\n", current);
 			} else {
-				printf("%c", root->children[i]->data);
+				current[strlen(current)] = root->children[i]->data;
 			}
-			print(root->children[i]);
-			
+		printHelper(root->children[i], current);
 		}
 	}
-
-
+	int j;
+	int l = strlen(current);
+	for (j = 0; j < l; j++) {
+		current[j] = '\0';
+	}	
 }
+
+
+void print(node_t* root) {
+	char* current = malloc(sizeof(char)*32);
+	printHelper(root, current);
+}
+
+
 
 int main() {
 
@@ -96,11 +107,13 @@ int main() {
 	char* s = "test";
 	char* s2 = "string";
 	char* s3 = "testing";
+	char* s4 = "you";
 	insert(root,s);
 	insert(root,s2);
 	insert(root,s3);
+	insert(root,s4);
 	print(root);
-	printf("%c\n", root->children[19]->children[4]->children[18]->children[19]->children[8]->data);	
+//	printf("%c\n", root->children[19]->children[4]->children[18]->children[19]->children[8]->data);	
 	return 0;
 }
 
