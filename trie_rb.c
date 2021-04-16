@@ -70,6 +70,20 @@ void insert(node_t* root, char* c) {
 }
 
 
+bool search(node_t* root, char* c) {
+	if (c == "\0") {
+		root->endOfWord = 'Y';
+		return true;
+	}
+		
+	int i = (int)c[0] - (int)'a';
+
+	if(root->children[i]->data == c[0]) {		
+		search(root->children[i], newString(c));
+	} else {
+		return false;
+	}		
+}
 
 
 
@@ -108,12 +122,23 @@ int main() {
 	char* s2 = "string";
 	char* s3 = "testing";
 	char* s4 = "you";
+	char* s5 = "apple";
+	printf("Contents of trie:\n");
 	insert(root,s);
 	insert(root,s2);
 	insert(root,s3);
 	insert(root,s4);
+	insert(root,s5);
 	print(root);
-//	printf("%c\n", root->children[19]->children[4]->children[18]->children[19]->children[8]->data);	
+	if (search(root, "apple")) {
+		printf("apple was found.\n");
+	}
+	if (search(root, "test")) {
+		printf("test was found.\n");
+	}
+	if (search(root, "testing")) {
+		printf("testing was found.\n");
+	}
 	return 0;
 }
 
