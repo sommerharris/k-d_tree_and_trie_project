@@ -71,24 +71,20 @@ void insert(node_t* root, char* c) {
 
 
 bool search(node_t* root, char* c) {
-	if (c == '\0') {// && root->endOfWord == 'Y') {
-			return;
-	}
-//		} else {
-//			printf("issue\n");
-//			return false;
-//		}
+	if (c == '\0') {
+		if(root->endOfWord == 'Y') {
+			return true;
+		}
+		return false;
+	} 
 	
 	int i = (int)c[0] - (int)'a';
 
 	if(root->children[i] != NULL && root->children[i]->data == c[0]) {		
-		search(root->children[i], newString(c));
-		if (root->children[i]->endOfWord) {
-			return true;
-		}
-	} else {
-		return false;
-	}		
+		return search(root->children[i], newString(c));
+	}
+
+	return false;
 }
 
 
@@ -151,6 +147,7 @@ int main() {
 	char* s3 = "testing";
 	char* s4 = "you";
 	char* s5 = "apple";
+	char* s6 = "stringy";
 
 	printf("Contents of trie:\n");
 	insert(root,s);
@@ -158,31 +155,41 @@ int main() {
 	insert(root,s3);
 	insert(root,s4);
 	insert(root,s5);
+	insert(root,s6);
 	print(root);
 
 	printf("\nSearch tests:\n");
-/*	if (search(root, "apple")) {
+	if (search(root, "apple")) {
 		printf("apple was found.\n");
+	} else {
+		printf("apple was not found.\n");
+	}
+	if (search(root, "app")) {
+		printf("app was found.\n");
+	} else {
+		printf("app was not found.\n");
 	}
 	if (search(root, "test")) {
 		printf("test was found.\n");
+	} else {
+		printf("test was not found.\n");
 	}
 	if (search(root, "testing")) {
 		printf("testing was found.\n");
+	} else {
+		printf("testing was not found.\n");
 	}
-*/
-	search(root,"apple");
-	printf("\nAfter deleting \"string\" and \"test\": \n");
-
-	delete(root,"string");
-	delete(root,"test");
-	print(root);
-
 	if (search(root, "banana")) {
 		printf("banana was found.\n");
 	} else {
 		printf("banana was not found.\n");
 	}
+
+	printf("\nAfter deleting \"string\" and \"testing\": \n");
+
+	delete(root,"string");
+	delete(root,"testing");
+	print(root);
 
 	return 0;
 }
