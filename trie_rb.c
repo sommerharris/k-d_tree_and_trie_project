@@ -34,7 +34,7 @@ node_t* makeNode(char a) {
 
 char* newString(char* c) {
 	if (strlen(c) == 1 ) {
-		return "\0";
+		return '\0';
 	}
 
 	char* new = malloc(sizeof(char)*32);
@@ -53,7 +53,7 @@ char* newString(char* c) {
 
 
 void insert(node_t* root, char* c) {
-	if (c == "\0") {
+	if (c == '\0') {
 		root->endOfWord = 'Y';
 		return;
 	}
@@ -71,18 +71,45 @@ void insert(node_t* root, char* c) {
 
 
 bool search(node_t* root, char* c) {
-	if (c == "\0") {
-		root->endOfWord = 'Y';
-		return true;
+	if (c == '\0') {// && root->endOfWord == 'Y') {
+			return;
+	}
+//		} else {
+//			printf("issue\n");
+//			return false;
+//		}
+	
+	int i = (int)c[0] - (int)'a';
+
+	if(root->children[i] != NULL && root->children[i]->data == c[0]) {		
+		search(root->children[i], newString(c));
+		if (root->children[i]->endOfWord) {
+			return true;
+		}
+	} else {
+		return false;
+	}		
+}
+
+
+void delete(node_t* root, char* c) {
+	if (c == '\0') {
+		root->endOfWord = 'N';
+		return;
 	}
 		
 	int i = (int)c[0] - (int)'a';
 
 	if(root->children[i]->data == c[0]) {		
-		search(root->children[i], newString(c));
-	} else {
-		return false;
-	}		
+		delete(root->children[i], newString(c));
+		int j;
+		for (i = 0; i < ALPHABET_SIZE; i++) {
+			if (root->children[i] != NULL) {
+				return;
+			}
+		}
+		root->children[i] = NULL;
+	} 
 }
 
 
@@ -118,11 +145,13 @@ void print(node_t* root) {
 int main() {
 
 	node_t* root = makeNode(' ');
+
 	char* s = "test";
 	char* s2 = "string";
 	char* s3 = "testing";
 	char* s4 = "you";
 	char* s5 = "apple";
+
 	printf("Contents of trie:\n");
 	insert(root,s);
 	insert(root,s2);
@@ -130,7 +159,9 @@ int main() {
 	insert(root,s4);
 	insert(root,s5);
 	print(root);
-	if (search(root, "apple")) {
+
+	printf("\nSearch tests:\n");
+/*	if (search(root, "apple")) {
 		printf("apple was found.\n");
 	}
 	if (search(root, "test")) {
@@ -139,6 +170,20 @@ int main() {
 	if (search(root, "testing")) {
 		printf("testing was found.\n");
 	}
+*/
+	search(root,"apple");
+	printf("\nAfter deleting \"string\" and \"test\": \n");
+
+	delete(root,"string");
+	delete(root,"test");
+	print(root);
+
+	if (search(root, "banana")) {
+		printf("banana was found.\n");
+	} else {
+		printf("banana was not found.\n");
+	}
+
 	return 0;
 }
 
