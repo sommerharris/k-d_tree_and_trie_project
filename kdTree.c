@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
 
 typedef struct node {
@@ -359,6 +360,247 @@ int insert(tree_t* t, int dataX, int dataY) {
 
 }
 
+
+// int delete(tree_t* t, int dataX, int dataY) {
+//     if(t == NULL) {
+//         return 0;
+//     }
+
+    
+//     deleteHelper(t->root, dataX, dataY);
+//     return 1;
+
+    
+// }
+
+// struct node* findMax(node_t* n) {
+//     node_t* temp = n;
+
+//     //traverse through the tree until find null value with node
+//     //this will give us the predecessor 
+
+//     while(temp && n->left != NULL) {
+//         temp = temp ->left;
+//     }
+
+//     return temp;
+
+
+
+// }
+
+// struct node* deleteHelper(node_t* node, int deleteX, int deleteY) {
+//     if (node == NULL) {
+//         return node;
+//     }
+
+    
+//     if(node->dataX == deleteX) {
+//         if(node->dataY == deleteY) {
+
+//             //account for nodes children 
+//             if(node->left == NULL) {
+//             node_t* tempNode = makeNode(deleteX, deleteY);
+//             tempNode = node->right;
+//             free(node);
+//             return tempNode;     
+            
+//         }
+//         //if node only has zero children 
+
+//         }
+//         else if(node->right == NULL) {
+//             node_t* tempNode = makeNode(deleteX, deleteY);
+//             tempNode = node->left;
+//             free(node);
+//             return tempNode;
+
+//         }
+    
+//******************
+//         //if node has two children 
+//         //must find pred in the list to replace node 
+//         //call helper function to find largest value in left subtree
+//         else {
+
+        
+//         node_t* findP = findMax(n->left);
+
+//         n->data = findP->data;
+
+//         n->left = deleteHelper(n->left, findP->data);
+
+//         }
+
+//         return n;
+        
+//     }
+
+
+//     if(n->data < value) {
+//         if(n->right != NULL) {
+//             return deleteHelper(n->right, value);
+              
+//         }
+//         else {
+//             printf("Value cannot be removed because it does not exist");
+//         }
+//     if(n->data > value) {
+//         if(n->left != NULL) {
+//             return deleteHelper(n->left, value);
+               
+//         }
+//          else {
+//             printf("Value cannot be removed because it does not exist");
+//         }
+//     }
+//     }
+//     return n;
+// }
+
+
+int nearestNodeHelper(node_t* node, int nearestX, int nearestY, int prevSmallest) {
+    static int SMALLEST = 0;
+    static int smallestXCoord = 0;
+    static int smallestYCoord = 0;
+
+    int currentSmallestDis = 0;
+    int currentSmallestXCoord = 0;
+    int currentSmallestYCoord = 0;
+    //traverse through each node in the tree and determine the distance 
+
+    //traverse through the tree until find null value with node
+    //this will give us the predecessor 
+
+    while(node->left != NULL && node->right != NULL) {
+        if(node->left != NULL){
+        int distanceLeft = sqrt(pow((node->left->dataX - nearestX), 2.0) + pow((node->left->dataY - nearestY), 2.0));
+        int distanceRight = sqrt(pow((node->right->dataX - nearestX), 2.0) + pow((node->right->dataY - nearestY), 2.0));
+
+        if(distanceLeft < distanceRight && prevSmallest == 0) {
+            prevSmallest = distanceLeft;
+            smallestXCoord = node->left->dataX;
+            smallestYCoord= node->left->dataY;  
+            printf("(%d,%d) is the closest coordinate with a distance of %d 1!", smallestXCoord, smallestYCoord, prevSmallest);
+            
+        }
+
+        else if(distanceLeft > distanceRight && prevSmallest == 0) {
+            prevSmallest = distanceRight;
+            smallestXCoord = node->right->dataX;
+            smallestYCoord= node->right->dataY;
+            printf("(%d,%d) is the closest coordinate with a distance of %d 2!", smallestXCoord, smallestYCoord, prevSmallest);
+        }
+
+        else if (distanceLeft < distanceRight && prevSmallest != 0) {
+            if(distanceLeft < prevSmallest) {
+                smallestXCoord = node->left->dataX;
+                smallestYCoord= node->left->dataY;  
+                prevSmallest = distanceLeft;
+                printf("(%d,%d) is the closest coordinate with a distance of %d 3!", smallestXCoord, smallestYCoord, prevSmallest);
+
+            }
+        }
+
+        else if(distanceLeft > distanceRight && prevSmallest != 0)
+        if(distanceRight < prevSmallest) {
+            smallestXCoord = node->right->dataX;
+            smallestYCoord= node->right->dataY;
+            prevSmallest = distanceRight;
+            printf("(%d,%d) is the closest coordinate with a distance of %d 4!", smallestXCoord, smallestYCoord, prevSmallest);
+        }
+
+        }
+
+    //if left node is not null and right node 
+        else if(node->left != NULL && node->right == NULL){ 
+            int distanceLeft = sqrt(pow((node->left->dataX - nearestX), 2.0) + pow((node->left->dataY - nearestY), 2.0));
+            printf("(%d,%d) is the closest coordinate with a distance of %d 5!", smallestXCoord, smallestYCoord, prevSmallest);
+
+            if(prevSmallest == 0) {    
+                smallestXCoord = node->left->dataX;
+                smallestYCoord = node->left->dataY;
+                prevSmallest = distanceLeft;
+                }
+                printf("(%d,%d) is the closest coordinate with a distance of %d 6!", smallestXCoord, smallestYCoord, prevSmallest);
+            
+
+            currentSmallestDis = distanceLeft;
+            currentSmallestXCoord = node->left->dataX;
+            currentSmallestYCoord = node->left->dataY;
+
+            if(currentSmallestDis < prevSmallest) {
+                smallestXCoord = currentSmallestXCoord;
+                smallestYCoord = currentSmallestYCoord;
+                prevSmallest = currentSmallestDis;
+            }
+
+        }
+
+        else if(node->left == NULL && node->right != NULL){ 
+            int distanceRight = sqrt(pow((node->right->dataX - nearestX), 2.0) + pow((node->right->dataY - nearestY), 2.0));
+            currentSmallestXCoord = node->right->dataX;
+            currentSmallestYCoord= node->right->dataY;
+            currentSmallestDis = distanceRight;
+            
+            if(prevSmallest == 0) {
+                smallestXCoord = node->left->dataX;
+                smallestYCoord = node->left->dataY;
+                prevSmallest = distanceRight;
+                }
+            
+
+            if(prevSmallest != 0) {
+                if(currentSmallestDis < prevSmallest) {
+                    prevSmallest = currentSmallestDis;
+                    smallestXCoord = currentSmallestXCoord;
+                    smallestYCoord = currentSmallestYCoord;
+                    }
+                }
+        }  
+        printf("(%d,%d) is the closest coordinate with a distance of %d", smallestXCoord, smallestYCoord, prevSmallest);
+
+    } 
+
+    
+
+    
+
+    return 0;
+}
+
+int findNearestNode(tree_t* t, int nearestX, int nearestY) {
+    
+    if(t == NULL) {
+        return 0;
+    }
+
+
+    //if value is the root node
+    if(t->root->dataX == nearestX) {
+        if(t->root->dataY == nearestY) {
+            printf("\n (%d, %d) -- Coordinate is found!\n", nearestX, nearestY);
+            nearestNodeHelper(t->root, nearestX, nearestY,0);
+        return 1;
+        }
+
+        else {
+            printf("\n (%d, %d) -- Coordinate is not found\n", nearestX, nearestY);
+
+        }
+
+        }
+ 
+    //else we call 
+
+  
+
+    return 0;
+}
+
+
+
+
 int main() {
     tree_t* myTree = makeTree();
     node_t* start = makeNode(10,3);
@@ -388,6 +630,10 @@ int main() {
     search(myTree, 2,20);
 
     search(myTree, 10,3);
+
+    findNearestNode(myTree, 4, 5);
+
+
 
 
 
