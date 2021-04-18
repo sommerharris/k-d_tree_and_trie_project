@@ -142,16 +142,21 @@ int searchHelperY(node_t* treeNode, int searchX, int searchY) {
         return 0;
     }
 
+    if(treeNode->dataX == searchX && treeNode->dataY == searchY) {
+        printf("\n (%d,%d) -- Coordinate is found!\n", searchX, searchY);
+    }
     //traverse to the right child
     if(treeNode->dataY < searchY) {
 
-        if(treeNode->right == NULL) {
-            printf("\n (%d, %d) -- Coordinate is found!\n", searchX, searchY);
+        if(treeNode->right != NULL) {
+            searchHelperX(treeNode->right, searchX, searchY);
+            
 
         }
 
         else {
-            searchHelperX(treeNode->right, searchX, searchY);
+            printf("\n (%d, %d) -- Coordinate is NOT found!\n", searchX, searchY);
+            
         }
     }
 
@@ -159,7 +164,7 @@ int searchHelperY(node_t* treeNode, int searchX, int searchY) {
     if(treeNode->dataY > searchY) {
 
         if(treeNode->left == NULL) {
-            printf("\n (%d, %d) -- Coordinate is found!\n", searchX, searchY);
+            printf("\n (%d, %d) -- Coordinate is NOT found!\n", searchX, searchY);
 
         }
 
@@ -179,11 +184,11 @@ int searchHelperX(node_t* treeNode, int searchX, int searchY) {
 
     //check if value is the current node
 
-    if(treeNode->dataX == searchX & treeNode->dataY == searchY) {
+    if(treeNode->dataX == searchX && treeNode->dataY == searchY) {
         printf("\n (%d, %d) -- Coordinate is found!\n", searchX, searchY);
     }
 
-    if(treeNode->dataX < searchX) {
+    if(searchX > treeNode->dataX) {
 
         //travel to the right side of the tree
 
@@ -194,22 +199,22 @@ int searchHelperX(node_t* treeNode, int searchX, int searchY) {
 
         //if the right child is null, we know that there will not be a match further down the tree
         else {
-            printf("\n (%d, %d) -- Coordinate is not found\n", searchX, searchY);
+            printf("\n (%d, %d) -- *1Coordinate is not found\n", searchX, searchY);
             
         }
     }
 
-    if(treeNode->dataX > searchX) {
+    if(searchX < treeNode->dataX)  {
         
 
         // traverse to LEFT side of tree
 
-    if (treeNode->right != NULL) {
-        searchHelperY(treeNode->right, searchX, searchY);
+    if (treeNode->left!= NULL) {
+        searchHelperY(treeNode->left, searchX, searchY);
         }
 
     else {
-        printf("\n(%d, %d) -- Coordinate is not found\n", searchX, searchY);
+        printf("\n(%d, %d) -- **Coordinate is not found\n", searchX, searchY);
         return 1;
         }
     }
@@ -223,33 +228,29 @@ int searchHelperX(node_t* treeNode, int searchX, int searchY) {
 
 
 
-int search(tree_t* t, int searchX, int searchY) {
+void search(tree_t* t, int searchX, int searchY) {
     if(t == NULL) {
-        return 0;
+        return;
     }
 
+    
+
     //if value is the root node
-    if(t->root->dataX == searchX) {
-        if(t->root->dataY == searchY) {
-            printf("\n (%d, %d) -- Coordinate is found!\n", searchX, searchY);
-        return 1;
-        }
-
-        else {
-            printf("\n (%d, %d) -- Coordinate is not found\n", searchX, searchY);
-
-        }
-
+    if(t->root->dataX == searchX && t->root->dataY == searchY) {
+        
+         printf("\n (%d, %d) -- Coordinate is found!\n", searchX, searchY);
+        return;
         }
  
     //else we call 
 
-    else {
-        searchHelperY(t->root, searchX, searchY);
-    }
-
-    return 0;
+    
+    searchHelperX(t->root, searchX, searchY);
+        
 }
+
+    
+
         
 
 //prints the tree in sorted order from smallest to largest. 
@@ -652,11 +653,17 @@ int main() {
 
     search(myTree, 4,5);
 
+    search(myTree, 13,16);
+
     search(myTree, 10,3);
+
+    search(myTree, 6,12);
 
     search(myTree, 3,7);
 
     search(myTree, 17,15);
+
+    search(myTree, 2,8);
 
     search(myTree, 10, 19);
 
