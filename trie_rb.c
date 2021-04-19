@@ -123,11 +123,13 @@ void printHelper(node_t* root, char* current) {
 		printHelper(root->children[i], current);
 		}
 	}
-	int j;
+	/*int j;
 	int l = strlen(current);
 	for (j = 0; j < l; j++) {
 		current[j] = '\0';
-	}	
+	}*/
+	current[strlen(current)-1] = '\0';
+		
 }
 
 
@@ -148,6 +150,8 @@ int main() {
 	char* s4 = "you";
 	char* s5 = "apple";
 	char* s6 = "stringy";
+	char* s7 = "application";
+	char* s8 = "app";
 
 	printf("Contents of trie:\n");
 	insert(root,s);
@@ -156,6 +160,8 @@ int main() {
 	insert(root,s4);
 	insert(root,s5);
 	insert(root,s6);
+	insert(root,s7);
+	insert(root,s8);
 	print(root);
 
 	printf("\nSearch tests:\n");
