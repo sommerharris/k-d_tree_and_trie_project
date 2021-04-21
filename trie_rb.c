@@ -110,6 +110,50 @@ void delete(node_t* root, char* c) {
 
 
 
+
+void nearestHelper2(node_t* root, char* fullWord) {
+	int i;
+	for (i = 0; i < ALPHABET_SIZE; i++) {
+		if (root->children[i] != NULL) {
+			if(root->children[i]->endOfWord == 'Y') {	
+				fullWord[strlen(fullWord)] = root->children[i]->data;
+				break;
+			} else {
+				fullWord[strlen(fullWord)] = root->children[i]->data;
+				nearestHelper2(root->children[i], fullWord);
+			}
+			return;
+		}
+	}
+}
+
+char* nearestHelper1(node_t* root, char* current, char* fullWord) {
+	if (current == '\0') {
+		if(root->endOfWord == 'Y') {
+			return fullWord;
+		} else {
+			nearestHelper2(root, fullWord);
+			return fullWord;
+		}
+	}
+
+	int i = (int)current[0] - (int)'a';
+
+	if (root->children[i] != NULL && current[0] == root->children[i]->data) {
+		fullWord[strlen(fullWord)] = current[0];
+		nearestHelper1(root->children[i], newString(current), fullWord);
+	} else {
+		nearestHelper2(root, fullWord);
+	} 	
+
+	return fullWord;		
+}
+
+char* nearestWord(node_t* root, char* c) {
+	char* fullWord = (char*)malloc(sizeof(char)*32);
+	return nearestHelper1(root, c, fullWord);
+}
+
 void printHelper(node_t* root, char* current) {
 	int i;
 	for (i = 0; i < ALPHABET_SIZE; i++) {
@@ -123,11 +167,6 @@ void printHelper(node_t* root, char* current) {
 		printHelper(root->children[i], current);
 		}
 	}
-	/*int j;
-	int l = strlen(current);
-	for (j = 0; j < l; j++) {
-		current[j] = '\0';
-	}*/
 	current[strlen(current)-1] = '\0';
 		
 }
@@ -162,6 +201,7 @@ int main() {
 	insert(root,s6);
 	insert(root,s7);
 	insert(root,s8);
+	insert(root,"arcade");
 	print(root);
 
 	printf("\nSearch tests:\n");
@@ -196,6 +236,20 @@ int main() {
 	delete(root,"string");
 	delete(root,"testing");
 	print(root);
+
+	printf("\nPrint nearest full word to \"str\":\n");
+	printf("%s\n", nearestWord(root,"str"));	
+
+	printf("\nPrint nearest full word to \"a\":\n");
+	printf("%s\n", nearestWord(root,"a"));	
+
+	printf("\nPrint nearest full word to \"you\":\n");
+	printf("%s\n", nearestWord(root,"you"));	
+
+	printf("\nPrint nearest full word to \"math\":\n");
+	printf("%s\n", nearestWord(root,"math"));	
+
+
 
 	return 0;
 }
