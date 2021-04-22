@@ -142,14 +142,38 @@ char* nearestHelper1(node_t* root, char* current, char* fullWord) {
 	if (root->children[i] != NULL && current[0] == root->children[i]->data) {
 		fullWord[strlen(fullWord)] = current[0];
 		nearestHelper1(root->children[i], newString(current), fullWord);
+	} else if(strlen(fullWord) == 0) {
+		int forward = 0;
+		int backward = 0;
+		int j = i;
+		int k = i;
+		while(root->children[j % ALPHABET_SIZE] == NULL) {
+			forward++;
+			j++;
+		}
+		while(root->children[k % ALPHABET_SIZE]==NULL) {
+			backward++;
+			k--;
+		}
+		if (forward <= backward) {
+			fullWord[strlen(fullWord)] = root->children[j % ALPHABET_SIZE]->data;
+			nearestHelper2(root->children[j % ALPHABET_SIZE], fullWord);
+		} else {
+			fullWord[strlen(fullWord)] = root->children[k % ALPHABET_SIZE]->data;
+			nearestHelper2(root->children[k % ALPHABET_SIZE], fullWord);
+		}	
 	} else {
 		nearestHelper2(root, fullWord);
-	} 	
+	} 
 
 	return fullWord;		
 }
 
 char* nearestWord(node_t* root, char* c) {
+	if (search(root, c)) {
+		return c;
+	}
+
 	char* fullWord = (char*)malloc(sizeof(char)*32);
 	return nearestHelper1(root, c, fullWord);
 }
@@ -183,25 +207,17 @@ int main() {
 
 	node_t* root = makeNode(' ');
 
-	char* s = "test";
-	char* s2 = "string";
-	char* s3 = "testing";
-	char* s4 = "you";
-	char* s5 = "apple";
-	char* s6 = "stringy";
-	char* s7 = "application";
-	char* s8 = "app";
-
 	printf("Contents of trie:\n");
-	insert(root,s);
-	insert(root,s2);
-	insert(root,s3);
-	insert(root,s4);
-	insert(root,s5);
-	insert(root,s6);
-	insert(root,s7);
-	insert(root,s8);
+	insert(root,"test");
+	insert(root,"string");
+	insert(root,"testing");
+	insert(root,"you");
+	insert(root,"apple");
+	insert(root,"stringy");
+	insert(root,"application");
+	insert(root,"app");
 	insert(root,"arcade");
+	insert(root,"use");
 	print(root);
 
 	printf("\nSearch tests:\n");
@@ -230,6 +246,16 @@ int main() {
 	} else {
 		printf("banana was not found.\n");
 	}
+	if (search(root, "useful")) {
+		printf("useful was found.\n");
+	} else {
+		printf("useful was not found.\n");
+	}
+	if (search(root, "us")) {
+		printf("us was found.\n");
+	} else {
+		printf("us was not found.\n");
+	}
 
 	printf("\nAfter deleting \"string\" and \"testing\": \n");
 
@@ -249,7 +275,17 @@ int main() {
 	printf("\nPrint nearest full word to \"math\":\n");
 	printf("%s\n", nearestWord(root,"math"));	
 
+	printf("\nPrint nearest full word to \"apply\":\n");
+	printf("%s\n", nearestWord(root,"apply"));
 
+	printf("\nPrint nearest full word to \"your\":\n");
+	printf("%s\n", nearestWord(root,"your"));
+	
+	printf("\nPrint nearest full word to \"zoo\":\n");
+	printf("%s\n", nearestWord(root,"zoo"));
+
+	printf("\nPrint nearest full word to \"useful\":\n");
+	printf("%s\n", nearestWord(root,"useful"));
 
 	return 0;
 }
