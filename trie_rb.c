@@ -32,6 +32,26 @@ node_t* makeNode(char a) {
 	return n;
 }
 
+void freeNode(node_t* n) {
+	free(n->children);
+	free(n);
+}
+
+void freeTrie(node_t* root) {
+	if(!root) {
+		return;
+	}
+
+	int i;
+	for (i = 0; i < ALPHABET_SIZE; i++) {
+		if (root->children[i] != NULL) {
+			freeTrie(root->children[i]);
+			free(root->children[i]);
+		}
+	}	
+}
+
+
 char* newString(char* c) {
 	if (strlen(c) == 1 ) {
 		return '\0';
@@ -60,11 +80,13 @@ void insert(node_t* root, char* c) {
 		
 	int i = (int)c[0] - (int)'a';
 
-	if(root->children[i] != NULL) {		
-		insert(root->children[i], newString(c));
+	if(root->children[i] != NULL) {
+		char* new = newString(c);		
+		insert(root->children[i], new);
 	} else {
+		char* new = newString(c);
 		root->children[i] = makeNode(c[0]);
-		insert(root->children[i], newString(c));	
+		insert(root->children[i], new);
 	}	
 
 }
@@ -83,7 +105,6 @@ bool search(node_t* root, char* c) {
 	if(root->children[i] != NULL && root->children[i]->data == c[0]) {		
 		return search(root->children[i], newString(c));
 	}
-
 	return false;
 }
 
@@ -207,6 +228,7 @@ void printHelper(node_t* root, char* current) {
 void print(node_t* root) {
 	char* current = malloc(sizeof(char)*32);
 	printHelper(root, current);
+	free(current);
 }
 
 
@@ -305,6 +327,8 @@ int main() {
 
 	printf("\nPrint nearest full word to \"applic\":\n");
 	printf("%s\n", nearestWord(root,"applic"));
+
+	freeTrie(root);
 
 	return 0;
 }
