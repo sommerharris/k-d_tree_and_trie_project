@@ -88,7 +88,8 @@ bool search(node_t* root, char* c) {
 }
 
 
-void delete(node_t* root, char* c) {
+void deleteHelper(node_t* root, char* c) {
+
 	if (c == '\0') {
 		root->endOfWord = 'N';
 		return;
@@ -97,18 +98,25 @@ void delete(node_t* root, char* c) {
 	int i = (int)c[0] - (int)'a';
 
 	if(root->children[i]->data == c[0]) {		
-		delete(root->children[i], newString(c));
+		deleteHelper(root->children[i], newString(c));
 		int j;
-		for (i = 0; i < ALPHABET_SIZE; i++) {
-			if (root->children[i] != NULL) {
+		for (j = 0; j < ALPHABET_SIZE; j++) {
+			if (root->children[j] != NULL) {
 				return;
 			}
 		}
-		root->children[i] = NULL;
+
+		free(root->children[i]);
+	} else {
+		return;
 	} 
 }
 
-
+void delete(node_t* root, char* c) {
+	if (search(root, c)) {
+		deleteHelper(root, c);
+	}
+}
 
 
 void nearestHelper2(node_t* root, char* fullWord) {
@@ -263,6 +271,14 @@ int main() {
 	delete(root,"testing");
 	print(root);
 
+	printf("\nAfter deleting \"banana\" and \"us\": \n");
+
+	delete(root,"us");
+	delete(root,"banana");
+	print(root);
+
+
+
 	printf("\nPrint nearest full word to \"str\":\n");
 	printf("%s\n", nearestWord(root,"str"));	
 
@@ -286,6 +302,9 @@ int main() {
 
 	printf("\nPrint nearest full word to \"useful\":\n");
 	printf("%s\n", nearestWord(root,"useful"));
+
+	printf("\nPrint nearest full word to \"applic\":\n");
+	printf("%s\n", nearestWord(root,"applic"));
 
 	return 0;
 }
