@@ -322,7 +322,69 @@ void printTreeTree(tree_t* t) {
     printHelperTree(t->root);
 }
 
+void printResultNN(int nnX, int nnY, int distance, int xCoord, int yCoord);
+//prints the tree in sorted order from smallest to largest. 
+void NNHelper(node_t* treeNode, int nnX, int nnY) {
+    static int smallestDistance = 0;
+    static int xCoord = 0;
+    static int yCoord = 0;
 
+    if(treeNode == NULL) {
+        return;
+    }
+    
+    
+    NNHelper(treeNode->left, nnX, nnY);
+    
+    int distance = 0;
+    distance = sqrt(pow((treeNode->dataX - nnX), 2.0) + pow((treeNode->dataY - nnY), 2.0));
+
+    //two print statements 
+    printf("\n (%d,%d) is at a distance of %d to coordinate (%d, %d)  \n", nnX, nnY, distance, treeNode->dataX, treeNode->dataY);
+    printResultNN(nnX, nnY, smallestDistance, xCoord, yCoord);
+
+ 
+    
+    NNHelper(treeNode->right, nnX, nnY);
+
+    if(nnX != treeNode->dataX && nnY != treeNode->dataY) {
+
+    
+        if(smallestDistance == 0) {
+            smallestDistance = distance;
+            xCoord = treeNode->dataX;
+            yCoord = treeNode->dataY;
+        } 
+        else if(distance < smallestDistance) {
+            smallestDistance = distance;
+            xCoord = treeNode->dataX;
+            yCoord = treeNode->dataY;
+        }
+    }
+    
+    
+    
+
+
+    
+    return;
+    
+}
+
+//printing our tree in order smallest to largest
+
+//prints the tree. 
+void NN(tree_t* t, int nnX, int nnY) {
+    if(t == NULL) {
+        return;
+    }
+    NNHelper(t->root, nnX, nnY);
+}
+
+void printResultNN(int nnX, int nnY, int distance, int xCoord, int yCoord) {
+    printf("\n (%d,%d) is the CURRENT SMALLEST distance of %d to coordinate (%d, %d)  \n", nnX, nnY, distance, xCoord, yCoord);
+ return;
+}
 
     
 
@@ -460,158 +522,152 @@ int insert(tree_t* t, int dataX, int dataY) {
 // }
 
 
-void nearestNodeHelper(node_t* node, int nearestX, int nearestY, int prevSmallest) {
-    static int SMALLEST = 0;
-    static int smallestXCoord = 0;
-    static int smallestYCoord = 0;
+// void nearestNodeHelper(node_t* node, int nearestX, int nearestY, int prevSmallest) {
+//     static int SMALLEST = 0;
+//     static int smallestXCoord = 0;
+//     static int smallestYCoord = 0;
 
-    int currentSmallestDis = 0;
-    int currentSmallestXCoord = 0;
-    int currentSmallestYCoord = 0;
-    //traverse through each node in the tree and determine the distance 
+//     int currentSmallestDis = 0;
+//     int currentSmallestXCoord = 0;
+//     int currentSmallestYCoord = 0;
+//     //traverse through each node in the tree and determine the distance 
 
-    //traverse through the tree until find null value with node
-    //this will give us the predecessor 
+//     //traverse through the tree until find null value with node
+//     //this will give us the predecessor 
 
-    if(node->left != NULL && node->right != NULL) {
+//     if(node->left != NULL && node->right != NULL) {
         
-    int distanceLeft = sqrt(pow((node->left->dataX - nearestX), 2.0) + pow((node->left->dataY - nearestY), 2.0));
-    int distanceRight = sqrt(pow((node->right->dataX - nearestX), 2.0) + pow((node->right->dataY - nearestY), 2.0));
+//     int distanceLeft = sqrt(pow((node->left->dataX - nearestX), 2.0) + pow((node->left->dataY - nearestY), 2.0));
+//     int distanceRight = sqrt(pow((node->right->dataX - nearestX), 2.0) + pow((node->right->dataY - nearestY), 2.0));
 
-    if(distanceLeft < distanceRight && prevSmallest == 0) {
-        prevSmallest = distanceLeft;
-        smallestXCoord = node->left->dataX;
-        smallestYCoord= node->left->dataY;  
-        //printf("1-(%d,%d) is the closest coordinate to (%d, %d) with a distance of %d \n", smallestXCoord, smallestYCoord, nearestX, nearestY, prevSmallest);
+//     if(distanceLeft < distanceRight && prevSmallest == 0) {
+//         prevSmallest = distanceLeft;
+//         smallestXCoord = node->left->dataX;
+//         smallestYCoord= node->left->dataY;  
+//         //printf("1-(%d,%d) is the closest coordinate to (%d, %d) with a distance of %d \n", smallestXCoord, smallestYCoord, nearestX, nearestY, prevSmallest);
        
-        }
+//         }
 
-    else if(distanceLeft > distanceRight && prevSmallest == 0) {
-        prevSmallest = distanceRight;
-        smallestXCoord = node->right->dataX;
-        smallestYCoord= node->right->dataY;
-        //printf("2-(%d,%d) is the closest coordinate to (%d, %d) with a distance of %d \n", smallestXCoord, smallestYCoord, nearestX, nearestY, prevSmallest);
-        }
+//     else if(distanceLeft > distanceRight && prevSmallest == 0) {
+//         prevSmallest = distanceRight;
+//         smallestXCoord = node->right->dataX;
+//         smallestYCoord= node->right->dataY;
+//         //printf("2-(%d,%d) is the closest coordinate to (%d, %d) with a distance of %d \n", smallestXCoord, smallestYCoord, nearestX, nearestY, prevSmallest);
+//         }
 
-    else if (distanceLeft < distanceRight && prevSmallest != 0) {
-            if(distanceLeft < prevSmallest) {
-                smallestXCoord = node->left->dataX;
-                smallestYCoord= node->left->dataY;  
-                prevSmallest = distanceLeft;
-                //printf("3-(%d,%d) is the closest coordinate to (%d, %d) with a distance of %d \n", smallestXCoord, smallestYCoord, nearestX, nearestY, prevSmallest);
+//     else if (distanceLeft < distanceRight && prevSmallest != 0) {
+//             if(distanceLeft < prevSmallest) {
+//                 smallestXCoord = node->left->dataX;
+//                 smallestYCoord= node->left->dataY;  
+//                 prevSmallest = distanceLeft;
+//                 //printf("3-(%d,%d) is the closest coordinate to (%d, %d) with a distance of %d \n", smallestXCoord, smallestYCoord, nearestX, nearestY, prevSmallest);
 
-            }
-        }
+//             }
+//         }
     
 
-        else if(distanceLeft > distanceRight && prevSmallest != 0)
-        if(distanceRight < prevSmallest) {
-            smallestXCoord = node->right->dataX;
-            smallestYCoord= node->right->dataY;
-            prevSmallest = distanceRight;
-            //printf("4-(%d,%d) is the closest coordinate to (%d, %d) with a distance of %d \n", smallestXCoord, smallestYCoord, nearestX, nearestY, prevSmallest);
-        }
+//         else if(distanceLeft > distanceRight && prevSmallest != 0)
+//         if(distanceRight < prevSmallest) {
+//             smallestXCoord = node->right->dataX;
+//             smallestYCoord= node->right->dataY;
+//             prevSmallest = distanceRight;
+//             //printf("4-(%d,%d) is the closest coordinate to (%d, %d) with a distance of %d \n", smallestXCoord, smallestYCoord, nearestX, nearestY, prevSmallest);
+//         }
 
-        }
+//         }
 
-    //if left node is not null and right node 
-    else if(node->left != NULL && node->right == NULL){ 
-        int distanceLeft = sqrt(pow((node->left->dataX - nearestX), 2.0) + pow((node->left->dataY - nearestY), 2.0));
+//     //if left node is not null and right node 
+//     else if(node->left != NULL && node->right == NULL){ 
+//         int distanceLeft = sqrt(pow((node->left->dataX - nearestX), 2.0) + pow((node->left->dataY - nearestY), 2.0));
         
 
-            if(prevSmallest == 0) {    
-                smallestXCoord = node->left->dataX;
-                smallestYCoord = node->left->dataY;
-                prevSmallest = distanceLeft;
-                }
+//             if(prevSmallest == 0) {    
+//                 smallestXCoord = node->left->dataX;
+//                 smallestYCoord = node->left->dataY;
+//                 prevSmallest = distanceLeft;
+//                 }
                 
             
 
-            currentSmallestDis = distanceLeft;
-            currentSmallestXCoord = node->left->dataX;
-            currentSmallestYCoord = node->left->dataY;
+//             currentSmallestDis = distanceLeft;
+//             currentSmallestXCoord = node->left->dataX;
+//             currentSmallestYCoord = node->left->dataY;
 
-            if(currentSmallestDis < prevSmallest) {
-                smallestXCoord = currentSmallestXCoord;
-                smallestYCoord = currentSmallestYCoord;
-                prevSmallest = currentSmallestDis;
-            }
+//             if(currentSmallestDis < prevSmallest) {
+//                 smallestXCoord = currentSmallestXCoord;
+//                 smallestYCoord = currentSmallestYCoord;
+//                 prevSmallest = currentSmallestDis;
+//             }
 
-        }
+//         }
 
-        else if(node->left == NULL && node->right != NULL){ 
-            int distanceRight = sqrt(pow((node->right->dataX - nearestX), 2.0) + pow((node->right->dataY - nearestY), 2.0));
-            currentSmallestXCoord = node->right->dataX;
-            currentSmallestYCoord= node->right->dataY;
-            currentSmallestDis = distanceRight;
+//         else if(node->left == NULL && node->right != NULL){ 
+//             int distanceRight = sqrt(pow((node->right->dataX - nearestX), 2.0) + pow((node->right->dataY - nearestY), 2.0));
+//             currentSmallestXCoord = node->right->dataX;
+//             currentSmallestYCoord= node->right->dataY;
+//             currentSmallestDis = distanceRight;
             
-            if(prevSmallest == 0) {
-                smallestXCoord = node->left->dataX;
-                smallestYCoord = node->left->dataY;
-                prevSmallest = distanceRight;
-                }
+//             if(prevSmallest == 0) {
+//                 smallestXCoord = node->left->dataX;
+//                 smallestYCoord = node->left->dataY;
+//                 prevSmallest = distanceRight;
+//                 }
             
 
-            if(prevSmallest != 0) {
-                if(currentSmallestDis < prevSmallest) {
-                    prevSmallest = currentSmallestDis;
-                    smallestXCoord = currentSmallestXCoord;
-                    smallestYCoord = currentSmallestYCoord;
-                    }
-                }
-        }  
+//             if(prevSmallest != 0) {
+//                 if(currentSmallestDis < prevSmallest) {
+//                     prevSmallest = currentSmallestDis;
+//                     smallestXCoord = currentSmallestXCoord;
+//                     smallestYCoord = currentSmallestYCoord;
+//                     }
+//                 }
+//         }  
 
-        if(node->left == NULL && node->right == NULL) {
-            printf("HERE");
-        }
-        printf("\n (%d,%d) is the closest coordinate to (%d, %d) with a distance of %d \n", smallestXCoord, smallestYCoord, nearestX, nearestY, prevSmallest);
-
-    } 
-
-    
-
-    
-
-
-void findNearestNode(tree_t* t, int nearestX, int nearestY) {
-    
-    if(t == NULL) {
-        return;
-    }
-
-
-    //if value is the root node
-    if(t->root->dataX == nearestX) {
-        if(t->root->dataY == nearestY) {
-            printf("\n (%d, %d) -- Coordinate is found!\n", nearestX, nearestY);
-            nearestNodeHelper(t->root, nearestX, nearestY,0);
-        return;
-        }
-
-        else if (t->root->left == NULL || t->root->right != NULL) {
-            if(t->root->left != NULL) {
-                nearestNodeHelper(t->root->left, nearestX, nearestY,0);
-            }
-
-            if(t->root->right != NULL) {
-                nearestNodeHelper(t->root->right, nearestX, nearestY,0);
-            }
-
-        }
-
-        else {
-
-            printf("\n (%d, %d) -- Coordinate is not found\n", nearestX, nearestY);
-        }
+//         if(node->left == NULL && node->right == NULL) {
+//             printf("HERE");
+//         }
         
- 
+
+//     } 
+
+
+// void findNearestNode(tree_t* t, int nearestX, int nearestY) {
     
+//     if(t == NULL) {
+//         return;
+//     }
 
-  
 
-    return;
-}
-}
+//     //if value is the root node
+//     if(t->root->dataX == nearestX) {
+//         if(t->root->dataY == nearestY) {
+//             printf("\n (%d,%d) -- Coordinate is found!\n", nearestX, nearestY);
+//             nearestNodeHelper(t->root, nearestX, nearestY,0);
+//         return;
+//         }
+//     }
+
+//     else if (t->root->left != NULL)  {
+//         // if(t->root->left != NULL) {
+//         nearestNodeHelper(t->root->left, nearestX, nearestY,0);
+//         }
+
+//     else if(t->root->right != NULL) {
+        
+//         nearestNodeHelper(t->root->right, nearestX, nearestY,0);
+//         }
+
+        
+
+//     else {
+
+//         printf("\n (%d, %d) -- Coordinate is not found\n", nearestX, nearestY);
+//         }
+
+
+//     return;
+// }
+
 
 
 
@@ -667,11 +723,15 @@ int main() {
 
     search(myTree, 10, 19);
 
-    findNearestNode(myTree, 3, 7);
+    NN(myTree, 3, 7);
 
-    printf("\nHERE\n");
+    // NN(myTree, 10, 19);
 
-    findNearestNode(myTree, 9, 1);
+    // NN(myTree, 17, 15);
+
+    // printTreeTree(myTree);
+
+
 
 
 
