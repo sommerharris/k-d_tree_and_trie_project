@@ -148,6 +148,12 @@ int main(){
     char* t8 = "popliteal";
     char* t9 = "zebra";
     char* t10 = "zest";
+    char* t11 = "test";
+    char* t12 = "string";
+    char* t13 = "you";
+    char* t14 = "stringy";
+    char* t15 = "arcade";
+    char* t16 = "use";
 
     char* prefix1 = "appl";
     char* prefix2 = "app";
@@ -165,6 +171,12 @@ int main(){
     insert(trie, t8);
     insert(trie, t9);
     insert(trie, t10);
+    insert(trie, t11);
+    insert(trie, t12);
+    insert(trie, t13);
+    insert(trie, t14);
+    insert(trie, t15);
+    insert(trie, t16);
 
     printf("The words in trie are:\n");
     printAll(trie);
