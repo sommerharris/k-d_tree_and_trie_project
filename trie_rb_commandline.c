@@ -143,6 +143,10 @@ int search(char** c) {
 
 //Helper function for delete.
 void deleteHelper(node_t* root, char* c) {
+	if(searchHelper(root, c) == false) {
+		return;
+	}
+
 	if (c == '\0') {
 		root->endOfWord = 'N';
 		return;
@@ -191,11 +195,9 @@ int nearestHelper2(node_t* root, char* fullWord) {
 int nearestHelper1(node_t* root, char* current, char* fullWord) {
 	if (current == '\0') {
 		if(root->endOfWord == 'Y') {
-			printf("%s is the nearest word.\n", fullWord);
 			return 1;
 		} else {
 			nearestHelper2(root, fullWord);
-			printf("%s is the nearest word.\n", fullWord);
 			return 1;
 		}
 	}
@@ -228,7 +230,6 @@ int nearestHelper1(node_t* root, char* current, char* fullWord) {
 	} else {
 		nearestHelper2(root, fullWord);
 	} 
-	printf("%s is the nearest word.\n", fullWord);
 	return 1;		
 }
 
@@ -236,7 +237,10 @@ int nearestHelper1(node_t* root, char* current, char* fullWord) {
 //Nearest word finds nearest full word to given prefix in trie.
 int nearestWord(char** c) {
 	char* fullWord = (char*)malloc(sizeof(char)*32);
-	return nearestHelper1(root, c[1], fullWord);
+	nearestHelper1(root, c[1], fullWord);
+	printf("%s is the nearest word.\n",fullWord);
+	free(fullWord);
+	return 1;
 }
 
 //Helper function for print.
@@ -253,14 +257,14 @@ void printHelper(node_t* root, char* current) {
 		printHelper(root->children[i], current);
 		}
 	}
-	current[strlen(current)-1] = '\0';
-	
+	current[strlen(current)-1] = '\0';	
 }
 
 //Prints every word in the trie in alphabetical order.
 int print(char** args) {
 	char* current = malloc(sizeof(char)*32);
 	printHelper(root, current);
+	free(current);
 	return 1;
 }
 
@@ -368,7 +372,8 @@ void trie_loop(void) {
 		free(line);
 		free(args);
 	} while(status);
-
+	
+	free(root);
 }
 
 //Main function to run loop.
