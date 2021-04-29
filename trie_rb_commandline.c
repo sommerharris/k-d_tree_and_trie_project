@@ -1,3 +1,5 @@
+//The following code is based on Stephen Brennan's tutorial on how to write a shell in C.
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -5,33 +7,37 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
-
 #define ALPHABET_SIZE 26
 
+//Define node struct for trie.
 typedef struct node {
 	char data;
 	struct node* children[ALPHABET_SIZE];
 	char endOfWord;
 } node_t;
 
+//Declare root of trie as global.
 node_t* root;
 
+//Declare built-in functions.
 int insert(char** args);
 int search(char** args);
 int delete(char** args);
 int nearestWord(char** args);
-int print(char** args);
-int quit(char** args);
+int print();
+int quit();
 
+//Create array of strings for built-in functions.
 char* builtin_str[] = {
 	"insert",
 	"search",
-	"remove",
-	"nearest word",
+	"delete",
+	"nearest",
 	"print",
 	"quit"
 };
 
+//Create array of pointers to built-in functions.
 int (*builtin_func[])(char**) = {
 	&insert,
 	&search,
@@ -41,10 +47,12 @@ int (*builtin_func[])(char**) = {
 	&quit
 };
 
+//Return the number of built-in functions.
 int num_builtins() {
 	return sizeof(builtin_str) / sizeof(char*);
 }
 
+//Make trie node.
 node_t* makeNode(char a) {
 	int i;	
 
@@ -64,7 +72,7 @@ node_t* makeNode(char a) {
 	return n;
 }
 
-
+//Remove first letter of given string.
 char* newString(char* c) {
 	if (strlen(c) == 1 ) {
 		return '\0';
@@ -83,6 +91,7 @@ char* newString(char* c) {
 	return new;
 }
 
+//Insert helper function.
 void insertHelper(node_t* root, char* c) {
 	if (c == '\0') {
 		root->endOfWord = 'Y';
@@ -98,12 +107,14 @@ void insertHelper(node_t* root, char* c) {
 	}	
 
 }
+
+//Insert given string into trie.
 int insert(char** c) {
 	insertHelper(root, c[1]);
 	return 1;
 }
 
-
+//Helper function for search.
 bool searchHelper(node_t* root, char* c) {
 	if (c == '\0') {
 		if(root->endOfWord == 'Y') {
@@ -120,6 +131,7 @@ bool searchHelper(node_t* root, char* c) {
 	return false;
 }
 
+//Search function to determine whether word exists in trie.
 int search(char** c) {
 	if (searchHelper(root, c[1])) {
 		printf("%s was found.\n",c[1]);
@@ -129,30 +141,35 @@ int search(char** c) {
 	return 1;
 }
 
-int delete(node_t* root, char** c) {
-	if (&c == '\0') {
+//Helper function for delete.
+void deleteHelper(node_t* root, char* c) {
+	if (c == '\0') {
 		root->endOfWord = 'N';
-		return 1;
+		return;
 	}
 		
-	int i = (int)&c[0] - (int)'a';
+	int i = (int)c[0] - (int)'a';
 
-	if(root->children[i]->data == &c[0]) {		
-		delete(root->children[i], newString(c));
+	if(root->children[i]->data == c[0]) {		
+		deleteHelper(root->children[i], newString(c));
 		int j;
 		for (i = 0; i < ALPHABET_SIZE; i++) {
 			if (root->children[i] != NULL) {
-				return 1;
+				return;
 			}
 		}
 		root->children[i] = NULL;
 	} 
+}
+
+//Deletes the given word from the trie.
+int delete(char** args) {
+	deleteHelper(root, args[1]);
 	return 1;
 }
 
 
-
-
+//Nearest helper function #2.
 int nearestHelper2(node_t* root, char* fullWord) {
 	int i;
 	for (i = 0; i < ALPHABET_SIZE; i++) {
@@ -170,6 +187,7 @@ int nearestHelper2(node_t* root, char* fullWord) {
 	return 1;
 }
 
+//Nearest helper function #1.
 int nearestHelper1(node_t* root, char* current, char* fullWord) {
 	if (current == '\0') {
 		if(root->endOfWord == 'Y') {
@@ -214,17 +232,14 @@ int nearestHelper1(node_t* root, char* current, char* fullWord) {
 	return 1;		
 }
 
+
+//Nearest word finds nearest full word to given prefix in trie.
 int nearestWord(char** c) {
-/*	if (search(root, c) ) {
-
-		return c;
-	}*/
-
 	char* fullWord = (char*)malloc(sizeof(char)*32);
-	return nearestHelper1(root, &c, fullWord);
-//	return 1;
+	return nearestHelper1(root, c[1], fullWord);
 }
 
+//Helper function for print.
 void printHelper(node_t* root, char* current) {
 	int i;
 	for (i = 0; i < ALPHABET_SIZE; i++) {
@@ -239,20 +254,22 @@ void printHelper(node_t* root, char* current) {
 		}
 	}
 	current[strlen(current)-1] = '\0';
-		
+	
 }
 
-
-int print() {
+//Prints every word in the trie in alphabetical order.
+int print(char** args) {
 	char* current = malloc(sizeof(char)*32);
 	printHelper(root, current);
 	return 1;
 }
 
+//Quits the program.
 int quit(char** args) {
 	return 0;
 }
 
+//Keeps program running.
 int launch(char** args) {
 	pid_t pid, wpid;
 	int status;
@@ -273,6 +290,7 @@ int launch(char** args) {
 	return 1;
 }
 
+//Executes built in function requested.
 int execute(char** args) {
 	int i;
 	if(args[0] == NULL) {
@@ -286,6 +304,7 @@ int execute(char** args) {
 	return launch(args);
 }
 
+//Reads line entered by user.
 #define RL_BUFSIZE 1024
 char* read_line(void) {
 	char* line = NULL;
@@ -303,6 +322,7 @@ char* read_line(void) {
 	return line;
 }
 
+//Tokenizes line entered by user.
 #define TOK_BUFSIZE 64
 #define TOK_DELIM " \t\r\n\a"
 char** split_line(char* line) {
@@ -333,6 +353,7 @@ char** split_line(char* line) {
 	return tokens;
 }
 
+//Declares variables and accepts user input.
 void trie_loop(void) {
 	char* line;
 	char** args;
@@ -348,99 +369,11 @@ void trie_loop(void) {
 		free(args);
 	} while(status);
 
-//	free(line);
-//	free(args);
 }
 
+//Main function to run loop.
 int main(int argc, char** argv) {
-
 	trie_loop();
-
-
-
-/*
-	node_t* root = makeNode(' ');
-
-	printf("Contents of trie:\n");
-	insert(root,"test");
-	insert(root,"string");
-	insert(root,"testing");
-	insert(root,"you");
-	insert(root,"apple");
-	insert(root,"stringy");
-	insert(root,"application");
-	insert(root,"app");
-	insert(root,"arcade");
-	insert(root,"use");
-	print(root);
-
-	printf("\nSearch tests:\n");
-	if (search(root, "apple")) {
-		printf("apple was found.\n");
-	} else {
-		printf("apple was not found.\n");
-	}
-	if (search(root, "app")) {
-		printf("app was found.\n");
-	} else {
-		printf("app was not found.\n");
-	}
-	if (search(root, "test")) {
-		printf("test was found.\n");
-	} else {
-		printf("test was not found.\n");
-	}
-	if (search(root, "testing")) {
-		printf("testing was found.\n");
-	} else {
-		printf("testing was not found.\n");
-	}
-	if (search(root, "banana")) {
-		printf("banana was found.\n");
-	} else {
-		printf("banana was not found.\n");
-	}
-	if (search(root, "useful")) {
-		printf("useful was found.\n");
-	} else {
-		printf("useful was not found.\n");
-	}
-	if (search(root, "us")) {
-		printf("us was found.\n");
-	} else {
-		printf("us was not found.\n");
-	}
-
-	printf("\nAfter deleting \"string\" and \"testing\": \n");
-
-	delete(root,"string");
-	delete(root,"testing");
-	print(root);
-
-	printf("\nPrint nearest full word to \"str\":\n");
-	printf("%s\n", nearestWord(root,"str"));	
-
-	printf("\nPrint nearest full word to \"a\":\n");
-	printf("%s\n", nearestWord(root,"a"));	
-
-	printf("\nPrint nearest full word to \"you\":\n");
-	printf("%s\n", nearestWord(root,"you"));	
-
-	printf("\nPrint nearest full word to \"math\":\n");
-	printf("%s\n", nearestWord(root,"math"));	
-
-	printf("\nPrint nearest full word to \"apply\":\n");
-	printf("%s\n", nearestWord(root,"apply"));
-
-	printf("\nPrint nearest full word to \"your\":\n");
-	printf("%s\n", nearestWord(root,"your"));
-	
-	printf("\nPrint nearest full word to \"zoo\":\n");
-	printf("%s\n", nearestWord(root,"zoo"));
-
-	printf("\nPrint nearest full word to \"useful\":\n");
-	printf("%s\n", nearestWord(root,"useful"));
-*/
 	return EXIT_SUCCESS;
 }
 
