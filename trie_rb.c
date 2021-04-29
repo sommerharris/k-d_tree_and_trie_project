@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <time.h>
 
 #define ALPHABET_SIZE 26
 
@@ -384,19 +385,34 @@ int main() {
 	//Make root node.
 	node_t* root = makeNode(' ');
 
+
 	//Insert and print words in trie.
 	printf("Contents of trie:\n");
-	insert(root,"test");
-	insert(root,"string");
-	insert(root,"testing");
-	insert(root,"you");
-	insert(root,"apple");
-	insert(root,"stringy");
-	insert(root,"application");
+
+	clock_t start = clock();
+
 	insert(root,"app");
+	insert(root,"apple");
+	insert(root,"application");
 	insert(root,"arcade");
+	insert(root,"pop");
+	insert(root,"pope");
+	insert(root,"poplin");
+	insert(root,"popliteal");
+	insert(root,"string");
+	insert(root,"stringy");
+	insert(root,"test");
+	insert(root,"testing");
 	insert(root,"use");
+	insert(root,"you");
+	insert(root,"zebra");
+	insert(root,"zest");
+
+	clock_t end = clock();
+	double total = (double)(end - start) / (CLOCKS_PER_SEC * 1000);
+
 	print(root);
+	printf("Insertion time: %f\n", total);
 
 
 	//Search for words and print results.
