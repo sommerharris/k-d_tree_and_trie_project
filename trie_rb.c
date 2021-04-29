@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
-#include <time.h>
 
 #define ALPHABET_SIZE 26
 
@@ -389,8 +388,6 @@ int main() {
 	//Insert and print words in trie.
 	printf("Contents of trie:\n");
 
-	clock_t start = clock();
-
 	insert(root,"app");
 	insert(root,"apple");
 	insert(root,"application");
@@ -408,11 +405,7 @@ int main() {
 	insert(root,"zebra");
 	insert(root,"zest");
 
-	clock_t end = clock();
-	double total = (double)(end - start) / (CLOCKS_PER_SEC * 1000);
-
 	print(root);
-	printf("Insertion time: %f\n", total);
 
 
 	//Search for words and print results.
