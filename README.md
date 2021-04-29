@@ -15,10 +15,10 @@ trie.c: One implementation of a trie.
 
 trie_rb.c: Another implementation of a trie.
 
-trie_rb_commandline.c: An in progress file for developing a command line program to manipulate a trie (in progress)
+trie_rb_commandline.c: A command line program to perform basic operations on a trie.
 
 AREAS FOR FUTURE DEVELOPMENT (in no particular order)
-1. Continuing work on our trie command line
+1. Continuing work on our trie command line program
 2. Creating a k-d tree for higher levels of k
 3. Creating a k-d tree for a customizable k
 4. Develop and implement tests toward a customizable keyboard: create a k-d tree where k=26 (for the letters in the alphabet)
